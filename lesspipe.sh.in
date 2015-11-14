@@ -560,6 +560,18 @@ isfinal() {
       lang=${3#$sep}
       lang="-l ${lang#.}"
       lang=${lang%%-l }
+      if cmd_exist source-highlight; then
+	  case "$2" in
+	      *ChangeLog|*changelog)
+		  source-highlight --failsafe -f esc --lang-def=changelog.lang --style-file=esc.style -i "$2"
+		  ;;
+	      *Makefile|*makefile)
+		  source-highlight --failsafe -f esc --lang-def=makefile.lang --style-file=esc.style -i "$2"
+		  ;;
+	      *)
+		  source-highlight --failsafe -f esc --lang-def=${lang}.lang  --style-file=esc.style -i "$2"
+	  esac
+      fi
       if cmd_exist code2color; then
         code2color $PPID ${in_file:+"$in_file"} $lang "$2"
         if [[ $? = 0 ]]; then
@@ -990,6 +1002,19 @@ isfinal() {
 # the next conditional is only there to remove syntax highlighting code
 #ifdef perl
   if [[ "$1" = *plain\ text* ]]; then
+    if cmd_exist source-highlight; then
+      case "$2" in
+	*ChangeLog|*changelog)
+	  source-highlight --failsafe -f esc --lang-def=changelog.lang --style-file=esc.style -i "$2"
+	  ;;
+	*Makefile|*makefile)
+	    source-highlight --failsafe -f esc --lang-def=makefile.lang --style-file=esc.style -i "$2"
+	    ;;
+	*)
+	    source-highlight --failsafe -f esc --infer-lang --style-file=esc.style -i "$2"
+      esac
+      return
+    fi
     if cmd_exist code2color; then
       code2color $PPID ${in_file:+"$in_file"} "$2"
       if [[ $? = 0 ]]; then
