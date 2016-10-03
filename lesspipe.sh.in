@@ -135,6 +135,11 @@ filetype () {
        type=" Excel document"
   elif [[ "$type" = *Hierarchical\ Data\ Format* && ("$name" = *.nc4) ]]; then
        type=" NetCDF Data Format data"
+  elif [[ "$type" = *roff\ *,* && ("$name" = */[Mm]akefile || "$name" = */[Mm]akefile.* || "$name" = */BSDmakefile || "$name" = *.mk) ]]; then
+       # Sometimes a BSD makefile is identified as "troff or
+       # preprocessor input text" probably due to its ".if" style
+       # directives.
+       type=" BSD makefile script,${type#*,}}"
   fi
   echo "$type"
 }
@@ -984,7 +989,7 @@ isfinal() {
     iconv -f UTF-16 "$2"
 #endif
 #ifdef gpg
-  elif [[ "$1" = *GPG\ encrypted\ data* ]] && cmd_exist gpg; then
+  elif [[ "$1" = *GPG\ encrypted\ data* || "$1" = *PGP\ *ncrypted* ]] && cmd_exist gpg; then
     msg "append $sep to filename to view the encrypted file"
     gpg -d "$2"
 #endif
